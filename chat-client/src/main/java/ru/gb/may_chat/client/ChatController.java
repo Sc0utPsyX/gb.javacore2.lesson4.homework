@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 public class ChatController implements Initializable {
 
+    String[] name = new String[1];
     @FXML
     private VBox mainPanel;
 
@@ -54,8 +55,12 @@ public class ChatController implements Initializable {
         if (text == null || text.isBlank()) {
             return;
         }
-
-        chatArea.appendText(text + System.lineSeparator());
+        if (name[0] == null) {
+            chatArea.appendText("Broadcast: " + text + System.lineSeparator());
+        }
+        else {
+            chatArea.appendText(name[0]+ ": " + text + System.lineSeparator());
+        }
         inputField.clear();
     }
 
@@ -63,9 +68,22 @@ public class ChatController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         List<String> names = List.of("Vasya", "Masha", "Petya", "Valera", "Nastya");
         contacts.setItems(FXCollections.observableList(names));
-
+        MultipleSelectionModel<String> contactsSelectionModel = contacts.getSelectionModel();
+        contactsSelectionModel.selectedItemProperty().addListener(new ChangeListener<String>(){
+            public void changed(ObservableValue<? extends String> changed, String oldValue, String newValue){
+                name[0] = newValue;
+            }
+        });
 
     }
-
+    public void openHelp(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader1 = new FXMLLoader();
+        loader1.setLocation(this.getClass().getResource("/Help.fxml"));
+        Parent parent1 = loader1.load();
+        Scene scene = new Scene(parent1);
+        Stage primaryStage = new Stage();
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 
 }
